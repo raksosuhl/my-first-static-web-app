@@ -51,28 +51,55 @@ export default {
     };
   },
   methods: {
-    async calculate() {
-      // Beispielhafte API-Aufrufe und Berechnungen
-      const cost = await this.getCost();
-      const co2 = await this.getCO2Emissions();
-      const energy = await this.getEnergyConsumption();
+    calculate() {
+      // Beispielhafte Berechnungen basierend auf festen Werten
+      const costPerHour = this.getCostPerHour();
+      const co2PerHour = this.getCO2PerHour();
+      const energyPerHour = this.getEnergyPerHour();
+
+      const cost = (this.time * costPerHour).toFixed(2);
+      const co2 = (this.time * co2PerHour).toFixed(2);
+      const energy = (this.time * energyPerHour).toFixed(2);
 
       this.result = { cost, co2, energy };
     },
-    async getCost() {
-      // Hier würden API-Aufrufe zu den Preis-APIs von AWS, Google Cloud und Azure erfolgen
-      // Rückgabe eines Beispielwerts
-      return (this.time * 0.5).toFixed(2); // Beispielrechnung
+    getCostPerHour() {
+      // Feste Kosten pro Stunde basierend auf GPU und Anbieter
+      const baseCost = {
+        "NVIDIA Tesla V100": 3.0,
+        "NVIDIA Tesla P100": 2.5,
+        "NVIDIA Tesla T4": 2.0
+      };
+      const providerMultiplier = {
+        "AWS": 1.0,
+        "Google Cloud": 1.1,
+        "Azure": 1.2
+      };
+      return baseCost[this.gpu] * providerMultiplier[this.provider];
     },
-    async getCO2Emissions() {
-      // Hier würden API-Aufrufe zur Berechnung der CO2-Emissionen erfolgen
-      // Rückgabe eines Beispielwerts
-      return (this.time * 0.3).toFixed(2); // Beispielrechnung
+    getCO2PerHour() {
+      // Feste CO2-Emissionen pro Stunde basierend auf GPU und Region
+      const baseCO2 = {
+        "NVIDIA Tesla V100": 1.5,
+        "NVIDIA Tesla P100": 1.2,
+        "NVIDIA Tesla T4": 1.0
+      };
+      const regionMultiplier = {
+        "Frankfurt, Germany": 0.8,
+        "Boston, USA": 1.0,
+        "Shenzhen, China": 1.5,
+        "Bangalore, India": 1.2
+      };
+      return baseCO2[this.gpu] * regionMultiplier[this.region];
     },
-    async getEnergyConsumption() {
-      // Hier würden API-Aufrufe zur Berechnung des Energieverbrauchs erfolgen
-      // Rückgabe eines Beispielwerts
-      return (this.time * 2).toFixed(2); // Beispielrechnung
+    getEnergyPerHour() {
+      // Fester Energieverbrauch pro Stunde basierend auf GPU
+      const baseEnergy = {
+        "NVIDIA Tesla V100": 0.9,
+        "NVIDIA Tesla P100": 0.7,
+        "NVIDIA Tesla T4": 0.5
+      };
+      return baseEnergy[this.gpu];
     }
   }
 };
