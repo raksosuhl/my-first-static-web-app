@@ -1,27 +1,18 @@
 <template>
   <div id="app">
     <h1>GreenAI Cost and CO2 Calculator</h1>
-    <div class="form-group">
-      <label for="gpu">GPU:</label>
-      <select v-model="gpu" class="form-control">
-        <option v-for="gpuOption in gpuOptions" :key="gpuOption" :value="gpuOption">{{ gpuOption }}</option>
-      </select>
+    <div class="input-group">
+      <label for="query">Query:</label>
+      <input type="text" v-model="query" class="form-control" placeholder="Enter your query" />
     </div>
-    <div class="form-group">
-      <label for="region">Region:</label>
-      <select v-model="region" class="form-control">
-        <option v-for="regionOption in regionOptions" :key="regionOption" :value="regionOption">{{ regionOption }}</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="provider">Provider:</label>
-      <select v-model="provider" class="form-control">
-        <option v-for="providerOption in providerOptions" :key="providerOption" :value="providerOption">{{ providerOption }}</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="time">Training Time (hours):</label>
-      <input type="number" v-model.number="time" min="1" class="form-control" />
+    <div class="info-box">
+      <p>Include the following in your query:</p>
+      <ul>
+        <li>What is your budget?</li>
+        <li>Where should the servers be located?</li>
+        <li>What type of AI training should be performed?</li>
+        <li>Do you know which model you want to use?</li>
+      </ul>
     </div>
     <div>
       <button @click="calculate" class="btn btn-primary">Calculate</button>
@@ -31,6 +22,10 @@
       <p><strong>Cost:</strong> {{ result.cost }} USD</p>
       <p><strong>CO2 Emissions:</strong> {{ result.co2 }} kg</p>
       <p><strong>Energy Consumption:</strong> {{ result.energy }} kWh</p>
+      <div class="rating">
+        <p>Rating:</p>
+        <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= result.rating }">★</span>
+      </div>
     </div>
   </div>
 </template>
@@ -40,62 +35,19 @@ export default {
   name: "App",
   data() {
     return {
-      gpu: "NVIDIA Tesla V100",
-      region: "Frankfurt, Germany",
-      provider: "AWS",
-      time: 1,
-      result: null,
-      gpuOptions: ["NVIDIA Tesla V100", "NVIDIA Tesla P100", "NVIDIA Tesla T4"],
-      regionOptions: ["Frankfurt, Germany", "Boston, USA", "Shenzhen, China", "Bangalore, India"],
-      providerOptions: ["AWS", "Google Cloud", "Azure"]
+      query: "",
+      result: null
     };
   },
   methods: {
     calculate() {
-      const costPerHour = this.getCostPerHour();
-      const co2PerHour = this.getCO2PerHour();
-      const energyPerHour = this.getEnergyPerHour();
+      // Beispielhafte Berechnungen basierend auf festen Werten
+      const cost = (Math.random() * 1000).toFixed(2);
+      const co2 = (Math.random() * 500).toFixed(2);
+      const energy = (Math.random() * 300).toFixed(2);
+      const rating = Math.floor(Math.random() * 5) + 1;
 
-      const cost = (this.time * costPerHour).toFixed(2);
-      const co2 = (this.time * co2PerHour).toFixed(2);
-      const energy = (this.time * energyPerHour).toFixed(2);
-
-      this.result = { cost, co2, energy };
-    },
-    getCostPerHour() {
-      const baseCost = {
-        "NVIDIA Tesla V100": 3.0,
-        "NVIDIA Tesla P100": 2.5,
-        "NVIDIA Tesla T4": 2.0
-      };
-      const providerMultiplier = {
-        "AWS": 1.0,
-        "Google Cloud": 1.1,
-        "Azure": 1.2
-      };
-      return baseCost[this.gpu] * providerMultiplier[this.provider];
-    },
-    getCO2PerHour() {
-      const baseCO2 = {
-        "NVIDIA Tesla V100": 1.5,
-        "NVIDIA Tesla P100": 1.2,
-        "NVIDIA Tesla T4": 1.0
-      };
-      const regionMultiplier = {
-        "Frankfurt, Germany": 0.8,
-        "Boston, USA": 1.0,
-        "Shenzhen, China": 1.5,
-        "Bangalore, India": 1.2
-      };
-      return baseCO2[this.gpu] * regionMultiplier[this.region];
-    },
-    getEnergyPerHour() {
-      const baseEnergy = {
-        "NVIDIA Tesla V100": 0.9,
-        "NVIDIA Tesla P100": 0.7,
-        "NVIDIA Tesla T4": 0.5
-      };
-      return baseEnergy[this.gpu];
+      this.result = { cost, co2, energy, rating };
     }
   }
 };
@@ -111,7 +63,7 @@ export default {
   margin: 0 auto;
 }
 
-.form-group {
+.input-group {
   margin-bottom: 20px;
 }
 
@@ -119,6 +71,20 @@ export default {
   width: 100%;
   padding: 10px;
   font-size: 1em;
+}
+
+.info-box {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.info-box ul {
+  list-style-type: disc;
+  margin: 10px 0 0 20px;
+  padding: 0;
 }
 
 .btn-primary {
@@ -141,5 +107,18 @@ export default {
 
 .results p {
   margin: 5px 0;
+}
+
+.rating {
+  margin-top: 10px;
+}
+
+.star {
+  font-size: 2em;
+  color: #ddd;
+}
+
+.star.filled {
+  color: gold;
 }
 </style>
